@@ -1,0 +1,130 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ink: #07162b;
+}
+
+body {
+  color: var(--ink);
+  background: #3d78f0;
+}
+
+/* Holographic backdrop: soft colour fields plus drifting prismatic streaks. */
+.holo {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background:
+    radial-gradient(55% 60% at 8% 18%, #9bd6ff 0%, rgba(155, 214, 255, 0) 70%),
+    radial-gradient(40% 55% at 92% 8%, #e1f6ff 0%, rgba(225, 246, 255, 0) 70%),
+    radial-gradient(45% 60% at 96% 88%, #ff93d2 0%, rgba(255, 147, 210, 0) 65%),
+    radial-gradient(50% 55% at 2% 96%, #0b3ccf 0%, rgba(11, 60, 207, 0) 70%),
+    radial-gradient(35% 40% at 50% 100%, #67e8f9 0%, rgba(103, 232, 249, 0) 70%),
+    linear-gradient(120deg, #4d8dff, #8ec5ff 40%, #5b7cff 70%, #2f5be6);
+}
+.holo::after {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background: repeating-linear-gradient(
+    110deg,
+    transparent 0 90px,
+    rgba(255, 255, 255, 0.25) 130px,
+    rgba(255, 182, 230, 0.2) 150px,
+    rgba(120, 255, 240, 0.18) 170px,
+    transparent 230px
+  );
+  filter: blur(26px);
+  animation: drift 26s ease-in-out infinite alternate;
+}
+@keyframes drift {
+  to { transform: translateX(7%) skewX(-5deg); }
+}
+
+/* Flat pale-blue panel with light shafts and a cursor-following highlight. */
+.panel {
+  background:
+    radial-gradient(520px circle at var(--mx, 72%) var(--my, 28%), rgba(255, 255, 255, 0.55), transparent 62%),
+    linear-gradient(
+      115deg,
+      rgba(255, 255, 255, 0) 18%,
+      rgba(255, 255, 255, 0.38) 30%,
+      rgba(255, 255, 255, 0) 42%,
+      rgba(255, 255, 255, 0.3) 60%,
+      rgba(255, 255, 255, 0) 72%
+    ),
+    #bddcf5;
+}
+
+/*
+ * One type scale for the whole app. Every piece of text uses exactly one of these:
+ *   display  Archivo Black, extended width: headlines
+ *   title    Archivo 700 16px: card titles, lead lines
+ *   body     Archivo 400 14px: paragraphs
+ *   input    JetBrains Mono 400 18px: the dictation field (fixed width, readable on a projector)
+ *   label    JetBrains Mono 11px caps: nav, meta, status, buttons
+ */
+@layer components {
+  .t-display {
+    font-weight: 900;
+    font-stretch: 125%;
+    font-variation-settings: "wdth" 125;
+    text-transform: uppercase;
+    line-height: 0.94;
+    letter-spacing: -0.01em;
+    font-size: clamp(32px, 7.4vw, 50px);
+  }
+  .t-title { font-weight: 700; font-size: 16px; line-height: 1.2; }
+  .t-body { font-weight: 400; font-size: 14px; line-height: 1.5; }
+  .t-input {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 1.45;
+    letter-spacing: 0;
+  }
+  .t-label {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 11px;
+    line-height: 1.4;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(18px); clip-path: inset(0 0 100% 0); }
+  to { opacity: 1; transform: translateY(0); clip-path: inset(0 0 0 0); }
+}
+.card-in {
+  opacity: 0;
+  animation: cardIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes wordIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1); }
+}
+.word-in { animation: wordIn 0.6s ease-out both; }
+
+@keyframes blink {
+  50% { opacity: 0.2; }
+}
+.blink { animation: blink 1s steps(2, start) infinite; }
+
+@keyframes bob {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -8px; }
+}
+.bob { animation: bob 4.5s ease-in-out infinite; }
+
+.strip::-webkit-scrollbar { height: 6px; }
+.strip::-webkit-scrollbar-thumb { background: rgba(7, 22, 43, 0.5); }
+.strip::-webkit-scrollbar-track { background: rgba(7, 22, 43, 0.08); }
+
+@media (prefers-reduced-motion: reduce) {
+  .holo::after, .bob, .blink { animation: none; }
+}
