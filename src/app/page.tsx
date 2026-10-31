@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { CreatedCard, Task } from "@/lib/types";
-import { isUndoCommand } from "@/lib/tasks";
+import { isUndoCommand, parseMoveCommand } from "@/lib/tasks";
 import { BlueCursor, Draggable, GlassWord, GreenSticker, PinkSticker } from "@/components/Decor";
 import { Shell } from "@/components/Shell";
 import { PlaceholderCard, ReviewCard, SummaryBlock, TaskCard } from "@/components/TaskCard";
@@ -145,6 +145,35 @@ export default function Home() {
     }
   }, []);
 
+  /** Voice command: "move the pricing deck to Done". */
+  const moveByVoice = useCallback(async (cmd: { query: string; list: string }) => {
+    if (processingRef.current) return;
+    processingRef.current = true;
+    setStatus("processing");
+    setMessage("");
+    try {
+      const res = await post("/api/move", cmd);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Move failed.");
+      if (data.moved) {
+        const name = ({ todo: "To Do", doing: "Doing", done: "Done" } as Record<string, string>)[data.list];
+        setStatus("done");
+        setMessage(`Moved "${data.title}" to ${name}.`);
+        textRef.current = "";
+        setText("");
+      } else {
+        setStatus("error");
+        setMessage(data.reason || "Couldn't move that card.");
+      }
+    } catch (err) {
+      setStatus("error");
+      setMessage(err instanceof Error ? err.message : "Couldn't move that card.");
+    } finally {
+      processingRef.current = false;
+      focusArea();
+    }
+  }, []);
+
   /** Writes the reviewed (possibly edited) tasks to Trello. */
   const createFromReview = useCallback(async () => {
     const r = reviewRef.current;
@@ -210,6 +239,11 @@ export default function Home() {
       undoLast();
       return;
     }
+    const move = parseMoveCommand(transcript);
+    if (move) {
+      moveByVoice(move);
+      return;
+    }
     const preview = reviewSecsRef.current > 0;
     processingRef.current = true;
     setStatus("processing");
@@ -256,7 +290,7 @@ export default function Home() {
       processingRef.current = false;
       focusArea();
     }
-  }, [finishBatch, undoLast]);
+  }, [finishBatch, undoLast, moveByVoice]);
 
   function onChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     const value = e.target.value;
@@ -274,9 +308,24 @@ export default function Home() {
     timerRef.current = setTimeout(() => {
       const t = textRef.current.trim();
       if (processingRef.current || reviewRef.current) return;
-      if (isUndoCommand(t) || t.length >= MIN_CHARS) submit();
+      if (isUndoCommand(t) || parseMoveCommand(t) || t.length >= MIN_CHARS) submit();
     }, IDLE_MS);
   }
+
+  // Keyboard: Esc cancels a review, Ctrl/Cmd+Enter creates now.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && reviewRef.current) cancelReview();
+      if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        if (timerRef.current) clearTimeout(timerRef.current);
+        if (reviewRef.current) createFromReview();
+        else submit();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [cancelReview, createFromReview, submit]);
 
   function onCreateClick() {
     if (timerRef.current) clearTimeout(timerRef.current);
@@ -516,7 +565,9 @@ export default function Home() {
               Create cards now ↵
             </button>
           </div>
-          <p className="t-label mt-1 opacity-60">Say &quot;undo&quot; to archive the last batch</p>
+          <p className="t-label mt-1 opacity-60">
+            Say &quot;undo&quot; or &quot;move the pricing deck to done&quot; · Ctrl+Enter creates · Esc cancels
+          </p>
         </div>
       </div>
     </Shell>

@@ -153,6 +153,40 @@ export async function createCards(tasks: Task[]): Promise<CreatedCard[]> {
   );
 }
 
+export type MoveResult = { moved: true; title: string; url: string; list: ListKey } | { moved: false; reason: string };
+
+/** Finds the open card that best matches a spoken description and moves it to a list. */
+export async function moveCard(query: string, list: ListKey): Promise<MoveResult> {
+  const info = await getBoardInfo();
+  const open = await trello<{ id: string; name: string; shortUrl: string; idList: string }[]>(
+    "GET",
+    `/boards/${boardId()}/cards`,
+    { fields: "name,shortUrl,idList" }
+  );
+  const words = normalise(query).split(" ").filter((w) => w.length > 1);
+  if (!words.length || !open.length) return { moved: false, reason: "No matching card." };
+
+  // Score = share of spoken words found in the title, with a small bonus for a tight title.
+  const scored = open
+    .map((c) => {
+      const title = normalise(c.name);
+      const tw = new Set(title.split(" "));
+      const hit = words.filter((w) => tw.has(w) || title.includes(w)).length;
+      return { c, score: hit / words.length + (hit / Math.max(tw.size, 1)) * 0.1 };
+    })
+    .sort((a, b) => b.score - a.score);
+
+  const best = scored[0];
+  if (best.score < 0.6) return { moved: false, reason: `Couldn't find a card matching "${query}".` };
+  if (scored[1] && scored[1].score >= best.score - 0.001 && best.score < 1) {
+    return { moved: false, reason: `"${query}" matches more than one card. Be more specific.` };
+  }
+  if (best.c.idList === info.lists[list]) return { moved: false, reason: `"${best.c.name}" is already there.` };
+
+  await trello("PUT", `/cards/${best.c.id}`, { idList: info.lists[list], pos: "bottom" });
+  return { moved: true, title: best.c.name.replace(/^[\u{1F534}\u{1F7E1}\u{1F7E2}]\s*/u, ""), url: best.c.shortUrl, list };
+}
+
 export async function archiveCards(ids: string[]): Promise<number> {
   const results = await Promise.allSettled(ids.map((id) => trello("PUT", `/cards/${id}`, { closed: "true" })));
   return results.filter((r) => r.status === "fulfilled").length;

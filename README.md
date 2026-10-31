@@ -32,6 +32,9 @@ Built for the Wispr Flow hackathon. Wispr Flow is the only input method: it type
 ### Control
 - **Review window.** Parsed tasks appear as editable cards with a countdown (default 3 s). Do nothing and they are created; touch any field to pause and edit title, owner, due date, priority or list, remove a task, then press Create now. `Review[3S]` in the header cycles 3 s / 6 s / off, and the choice is remembered.
 - **Voice undo.** Say "undo", "delete those", "remove that" or "scratch that" (or press Undo last) to archive the most recent batch. Cards are archived, never deleted, so it is reversible in Trello.
+- **Move cards by voice.** Say "move the pricing deck to Done" (or "put ... into doing" / "in progress"). The best-matching open card is moved; ambiguous or unmatched descriptions are refused with a clear message instead of guessing.
+- **Passcode gate.** Set `APP_PASSCODE` and every page and API route requires sign-in (`/login`, 7-day cookie), so a public demo cannot be used to write to your board. Unset locally.
+- **Keyboard shortcuts.** Ctrl/Cmd+Enter creates now; Esc cancels a review.
 - **Duplicate guard.** A task similar to an existing open card (or to another task in the same batch) is skipped and linked to the existing card instead.
 
 ### Trello integration
@@ -102,6 +105,8 @@ For a demo, `npm run build && npm start` avoids the slow first compile of dev mo
 | `GEMINI_MODEL` | Optional, defaults to `gemini-3.1-flash-lite` (fast; larger models can be slow on the free tier) |
 | `TRELLO_KEY`, `TRELLO_TOKEN` | Trello REST credentials |
 | `TRELLO_BOARD_ID` | The board cards are written to |
+| `APP_PASSCODE` | Optional. When set, the whole app is behind a passcode (use this in production) |
+| `NEXT_PUBLIC_TRELLO_BOARD_ID` | Optional. Enables the Trello links in the header |
 
 `.env.local` is git-ignored. Trello tokens can be set to expire; regenerate yours if calls start returning 401.
 
@@ -115,6 +120,8 @@ For a demo, `npm run build && npm start` avoids the slow first compile of dev mo
 | `/board` | Live Trello board view |
 | `POST /api/process` | `{ transcript, today, preview? }`. With `preview: true` returns `{ summary, decisions, tasks }` and writes nothing; otherwise extracts and creates, returning `{ summary, decisions, cards }` |
 | `POST /api/create` | `{ tasks }` creates reviewed tasks, returns `{ cards }` (each card has `id`, `url`, `assigned`, or `duplicate` / `error`) |
+| `POST /api/move` | `{ query, list }` moves the best-matching open card to `todo` / `doing` / `done` |
+| `POST /api/login` | `{ passcode }` sets the auth cookie (only when `APP_PASSCODE` is set) |
 | `POST /api/undo` | `{ ids }` archives cards, returns `{ archived }` |
 | `GET /api/board` | The board's lists and open cards, with priority parsed from labels |
 
