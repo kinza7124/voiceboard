@@ -42,7 +42,22 @@ function todayISO() {
 }
 
 const pad2 = (n: number) => String(n).padStart(2, "0");
-const par = (x: number, y: number) => ({
+
+/** Meeting notes as Markdown, ready to paste into Slack, email or a doc. */
+function toMarkdown(batch: Batch): string {
+  const owner = (c: CreatedCard) => (c.owner ? ` (${c.owner})` : "");
+  const due = (c: CreatedCard) => (c.due ? `, due ${c.due}` : "");
+  const lines = [batch.summary ? `**Summary:** ${batch.summary}` : "", ""];
+  if (batch.decisions.length) lines.push("**Decisions**", ...batch.decisions.map((d) => `- ${d}`), "");
+  lines.push(
+    "**Tasks**",
+    ...batch.cards
+      .filter((c) => !c.duplicate)
+      .map((c) => `- [${c.list === "done" ? "x" : " "}] ${c.title}${owner(c)}${due(c)} · ${c.priority} priority`)
+  );
+  return lines.join("\n").trim();
+}
+const par =(x: number, y: number) => ({
   transform: `translate(calc(var(--px, 0) * ${x}px), calc(var(--py, 0) * ${y}px))`,
 });
 const post = (url: string, body: unknown) =>
@@ -58,6 +73,7 @@ export default function Home() {
   const [paused, setPaused] = useState(false);
   const [reviewSecs, setReviewSecs] = useState(3);
   const [counts, setCounts] = useState({ made: 0, dups: 0 });
+  const [copiedMd, setCopiedMd] = useState(false);
 
   const areaRef = useRef<HTMLTextAreaElement>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -485,6 +501,23 @@ export default function Home() {
                 </span>
                 {!processing && (
                   <span className="flex shrink-0 gap-4">
+                    {latest && (
+                      <button
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(toMarkdown(latest));
+                            setCopiedMd(true);
+                            setTimeout(() => setCopiedMd(false), 1400);
+                          } catch {
+                            /* clipboard can be blocked; nothing to do */
+                          }
+                        }}
+                        className="hover:underline"
+                        title="Copy the summary, decisions and tasks as Markdown"
+                      >
+                        {copiedMd ? "Copied ✓" : "Copy notes (MD)"}
+                      </button>
+                    )}
                     {batches.length > 0 && (
                       <button onClick={undoLast} className="hover:underline" title='Or just say "undo"'>
                         Undo last ↺

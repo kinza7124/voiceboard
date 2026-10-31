@@ -34,6 +34,8 @@ Built for the Wispr Flow hackathon. Wispr Flow is the only input method: it type
 - **Voice undo.** Say "undo", "delete those", "remove that" or "scratch that" (or press Undo last) to archive the most recent batch. Cards are archived, never deleted, so it is reversible in Trello.
 - **Move cards by voice.** Say "move the pricing deck to Done" (or "put ... into doing" / "in progress"). The best-matching open card is moved; ambiguous or unmatched descriptions are refused with a clear message instead of guessing.
 - **Passcode gate.** Set `APP_PASSCODE` and every page and API route requires sign-in (`/login`, 7-day cookie), so a public demo cannot be used to write to your board. Unset locally.
+- **Copy notes as Markdown.** One click copies the latest summary, decisions and task checklist for Slack, email or docs.
+- **Production-ready timeouts.** The API routes set `maxDuration` (60 s for extraction) so a slow model call does not hit Vercel's short default limit.
 - **Keyboard shortcuts.** Ctrl/Cmd+Enter creates now; Esc cancels a review.
 - **Duplicate guard.** A task similar to an existing open card (or to another task in the same batch) is skipped and linked to the existing card instead.
 

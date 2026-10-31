@@ -4,6 +4,7 @@ import { createCards } from "@/lib/trello";
 import type { Task } from "@/lib/types";
 
 export const runtime = "nodejs";
+export const maxDuration = 30;
 
 /** POST { tasks } -> { cards }. Creates reviewed (possibly user-edited) tasks on Trello. */
 export async function POST(req: Request) {

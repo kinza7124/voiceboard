@@ -3,6 +3,7 @@ import { extractTasks, ModelParseError } from "@/lib/llm";
 import { createCards } from "@/lib/trello";
 
 export const runtime = "nodejs";
+export const maxDuration = 60; // Gemini on the free tier can be slow; the default serverless limit is too short
 
 /**
  * POST { transcript, today, preview? }

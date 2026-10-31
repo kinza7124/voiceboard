@@ -3,6 +3,7 @@ import { moveCard } from "@/lib/trello";
 import type { ListKey } from "@/lib/types";
 
 export const runtime = "nodejs";
+export const maxDuration = 30;
 
 /** POST { query, list } -> moves the best-matching open card to that list. */
 export async function POST(req: Request) {
