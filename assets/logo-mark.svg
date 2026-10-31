@@ -1,25 +1,38 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="VoiceBoard logo mark">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="VoiceBoard">
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#4d8dff"/>
-      <stop offset="0.55" stop-color="#8a5cff"/>
-      <stop offset="1" stop-color="#ff4fa0"/>
+    <linearGradient id="bg" x1="0.15" y1="0" x2="0.85" y2="1">
+      <stop offset="0" stop-color="#6FAAFF"/>
+      <stop offset="0.55" stop-color="#5B64FF"/>
+      <stop offset="1" stop-color="#7B4DFF"/>
     </linearGradient>
-    <linearGradient id="l" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#4d8dff"/>
-      <stop offset="1" stop-color="#ff4fa0"/>
+    <radialGradient id="glow" cx="0.85" cy="0.95" r="0.7">
+      <stop offset="0" stop-color="#FF6FA8" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#FF6FA8" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.34"/>
+      <stop offset="0.5" stop-color="#fff" stop-opacity="0"/>
     </linearGradient>
+    <linearGradient id="bar" gradientUnits="userSpaceOnUse" x1="0" y1="120" x2="0" y2="180">
+      <stop offset="0" stop-color="#6FAAFF"/>
+      <stop offset="1" stop-color="#7B4DFF"/>
+    </linearGradient>
+    <clipPath id="clip"><rect width="256" height="256" rx="58"/></clipPath>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%">
+      <feDropShadow dx="0" dy="8" stdDeviation="9" flood-color="#1a1f6e" flood-opacity="0.32"/>
+    </filter>
   </defs>
-  <rect width="256" height="256" rx="64" fill="url(#g)"/>
-  <g stroke="#fff" stroke-width="15" stroke-linecap="round">
-    <line x1="52" y1="104" x2="52" y2="152"/>
-    <line x1="80" y1="80" x2="80" y2="176"/>
-    <line x1="108" y1="58" x2="108" y2="198"/>
-    <line x1="136" y1="90" x2="136" y2="166"/>
+  <g clip-path="url(#clip)">
+    <rect width="256" height="256" fill="url(#bg)"/>
+    <rect width="256" height="256" fill="url(#glow)"/>
+    <rect width="256" height="128" fill="url(#sheen)"/>
   </g>
-  <rect x="160" y="84" width="58" height="88" rx="12" fill="#fff"/>
-  <rect x="171" y="98" width="36" height="9" rx="4.5" fill="url(#l)"/>
-  <rect x="171" y="116" width="26" height="7" rx="3.5" fill="#07162b" opacity=".75"/>
-  <rect x="171" y="130" width="32" height="7" rx="3.5" fill="#07162b" opacity=".35"/>
-  <circle cx="207" cy="154" r="6" fill="#ff4fa0"/>
+  <rect x="0.75" y="0.75" width="254.5" height="254.5" rx="57.5" fill="none" stroke="#fff" stroke-opacity="0.28" stroke-width="1.5"/>
+  <rect x="72" y="58" width="112" height="140" rx="26" fill="#fff" filter="url(#shadow)"/>
+  <rect x="92" y="82" width="34" height="8" rx="4" fill="#C9D0EA"/>
+  <g stroke="url(#bar)" stroke-width="13" stroke-linecap="round">
+    <line x1="100" y1="146" x2="100" y2="166"/>
+    <line x1="128" y1="124" x2="128" y2="176"/>
+    <line x1="156" y1="136" x2="156" y2="164"/>
+  </g>
 </svg>

@@ -1,310 +1,157 @@
 <p align="center">
-  <img src="assets/logo.png" alt="VoiceBoard" width="560">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.png">
+    <img src="assets/logo.png" alt="VoiceBoard" width="420">
+  </picture>
 </p>
 
-<h3 align="center">Talk. Cards appear.</h3>
+<p align="center"><strong>Talk. Cards appear.</strong></p>
 
 <p align="center">
-  Voice-first task capture: dictate a messy meeting, get real Trello cards.<br>
+  Dictate a messy meeting with <a href="https://wisprflow.ai">Wispr Flow</a>. VoiceBoard files real Trello cards with owners, due dates, priorities and lists.
+</p>
+
+<p align="center">
   <a href="https://voiceboard-three.vercel.app">Live demo</a> ·
   <a href="media/brag.mp4">Launch video</a> ·
   <a href="#brand">Brand</a>
 </p>
 
-<p align="center">
-  <img src="assets/banner.png" alt="VoiceBoard: Talk. Cards appear." width="720">
-</p>
-
 ---
 
-# VoiceBoard
+## Overview
 
-**Talk. Cards appear.** Dictate a messy meeting brain-dump with [Wispr Flow](https://wisprflow.ai) and VoiceBoard turns it into real, structured Trello cards: title, owner, due date, priority, list and notes. No keyboard, no form.
-
-Built for the Wispr Flow hackathon. Wispr Flow is the only input method: it types into the focused field, and VoiceBoard takes it from there.
-
-**Launch video:** [`media/brag.mp4`](media/brag.mp4) (25 s, with a [poster frame](media/brag.jpg)). The dictation in the video is an animated depiction, not a recording.
-
----
-
-## Table of contents
-
-1. [Features](#features)
-2. [How it works](#how-it-works)
-3. [Setup](#setup)
-4. [Pages and API](#pages-and-api)
-5. [Project structure](#project-structure)
-6. [Demo script](#demo-script)
-7. [Known limits](#known-limits)
-8. [Ideas to add product value](#ideas-to-add-product-value)
-9. [Brand](#brand)
-
----
+After a meeting someone has to turn the chaos into tasks. VoiceBoard removes that step. You talk, it listens through Wispr Flow (which types into the focused field), and a model splits the ramble into clean action items. You get a moment to review and edit them, then they land on your Trello board.
 
 ## Features
 
-### Capture
-- **Hands-free flow.** Dictate into the field, pause for 2.5 s, and the app submits itself. There is also a "Create cards now" button as a fallback.
-- **Multiple tasks from one ramble.** Compound sentences are split into separate action items; chit-chat and filler words are ignored.
-- **Smart dates.** "Friday", "end of next week" and "in two weeks" are resolved against today's date using a literal 14-day calendar sent to the model, so results are the same on every run (including when today is itself a Friday).
-- **Self-corrections.** "Actually make that Thursday" uses the corrected value.
-- **Urgency detection.** Words like urgent, ASAP and blocking give High priority; "no rush" gives Low.
-- **Summary and decisions.** Each dictation gets a one-line summary plus any decisions that were stated (not action items).
+**Capture**
+- Hands-free: dictate, pause for 2.5 seconds, and it submits itself.
+- One ramble becomes many tasks. Compound sentences are split and filler is ignored.
+- Smart dates: "Friday", "end of next week" and "in two weeks" are resolved against today's date.
+- Self-corrections are honoured ("actually make that Thursday").
+- Urgency detection sets priority, and a one-line summary plus any stated decisions are extracted.
 
-### Control
-- **Review window.** Parsed tasks appear as editable cards with a countdown (default 3 s). Do nothing and they are created; touch any field to pause and edit title, owner, due date, priority or list, remove a task, then press Create now. `Review[3S]` in the header cycles 3 s / 6 s / off, and the choice is remembered.
-- **Voice undo.** Say "undo", "delete those", "remove that" or "scratch that" (or press Undo last) to archive the most recent batch. Cards are archived, never deleted, so it is reversible in Trello.
-- **Move cards by voice.** Say "move the pricing deck to Done" (or "put ... into doing" / "in progress"). The best-matching open card is moved; ambiguous or unmatched descriptions are refused with a clear message instead of guessing.
-- **Passcode gate.** Set `APP_PASSCODE` and every page and API route requires sign-in (`/login`, 7-day cookie), so a public demo cannot be used to write to your board. Unset locally.
-- **Copy notes as Markdown.** One click copies the latest summary, decisions and task checklist for Slack, email or docs.
-- **Production-ready timeouts.** The API routes set `maxDuration` (60 s for extraction) so a slow model call does not hit Vercel's short default limit.
-- **Keyboard shortcuts.** Ctrl/Cmd+Enter creates now; Esc cancels a review.
-- **Duplicate guard.** A task similar to an existing open card (or to another task in the same batch) is skipped and linked to the existing card instead.
+**Control**
+- **Review window.** Parsed tasks appear as editable cards with a short countdown. Do nothing and they are created; touch a field to pause and edit title, owner, due date, priority or list.
+- **Voice commands.** Say "undo" to archive the last batch, or "move the pricing deck to done" to move a card.
+- **Duplicate guard.** A task that matches an open card is skipped and linked to the existing one.
+- **Keyboard.** Ctrl/Cmd+Enter creates now; Esc cancels a review.
 
-### Trello integration
-- **Real cards** on a real board, created in parallel for speed, with a per-card result so one failure never blocks the others.
-- **Smart list routing.** "Already in progress" goes to Doing, "already done" to Done, everything else to To Do.
-- **Real assignees.** Owners are matched to Trello board members by full name, username or first name; "I" / "me" maps to the account that owns the token. A tick next to the owner shows a real assignment.
-- **Priority labels.** `P1 High` (red), `P2 Medium` (yellow) and `P3 Low` (green) are created on the board on first use and attached to cards.
-- **Due dates** are set on the card (17:00 UTC on the due day).
-- **Owner and notes** are written into the description.
+**Trello**
+- Cards are created in parallel, with a per-card result so one failure never blocks the rest.
+- Routing by status: "already in progress" goes to Doing, "already done" to Done.
+- Owners are matched to board members and assigned ("me" maps to the token's account).
+- Priority labels (P1 High, P2 Medium, P3 Low) are created on first use.
+- Due dates, owner and notes are written to the card.
 
-### Interface
-- **Live board page** (`/board`): To Do / Doing / Done columns, filterable by priority, refreshed every 10 s so cards you dictate show up on their own.
-- **Ticket cards** with priority, owner, due date with relative days ("+7d"), list, Open and Copy-link actions, and a Notes flip.
-- **Editorial design** inspired by a design-engineer portfolio: holographic backdrop, hairline grid, glass script word that reflects the app state (speak / go on / sorting / check / done), draggable stickers.
-- **Responsive** from phone to desktop, with one type scale used everywhere (`.t-display`, `.t-title`, `.t-body`, `.t-input`, `.t-label` in `src/app/globals.css`).
-- **Honest status line** for every state, including errors. On any error your text and tasks are kept so nothing is lost.
+**Interface**
+- Live `/board` page with To Do, Doing and Done columns, priority filters and automatic refresh.
+- Copy the latest summary, decisions and tasks as Markdown.
+- Responsive from phone to desktop.
 
-### Safety
-- All API keys and tokens stay server-side; the browser only talks to the app's own routes.
-- Inputs are validated: empty or over-5,000-character transcripts are rejected, task payloads are sanitised, and card ids must be 24-character hex before anything is archived.
-
----
+**Safety**
+- API keys and tokens stay on the server.
+- Optional passcode gate (`APP_PASSCODE`) protects every page and API route, so a public deployment cannot write to your board.
+- Inputs are validated, and cards are archived, never deleted.
 
 ## How it works
 
 ```
-Browser (page.tsx)
-  textarea --(2.5 s idle)--> POST /api/process { transcript, today, preview }
-                                   |
-                                   |-- Gemini: transcript -> { summary, decisions, tasks[] }
-                                   v
-                         review window (editable, 3 s countdown)
-                                   |
-                                   v
-                         POST /api/create { tasks }
-                                   |-- cache: lists, members, labels (60 s)
-                                   |-- duplicate check against open cards
-                                   |-- POST /cards in parallel (list, labels, member, due)
-                                   v
-                         cards with ids + urls  ->  UI strip   /board polls GET /api/board
-                                   "undo" -> POST /api/undo { ids } -> archive
+Browser
+  input --(2.5 s pause)--> POST /api/process   transcript -> summary, decisions, tasks   (Gemini)
+                                |
+                                v
+                          review window  (editable, short countdown)
+                                |
+                                v
+                          POST /api/create     duplicate check -> create cards in parallel -> Trello
+                                |
+                                v
+                          cards shown in the UI;  /board polls GET /api/board
+
+  "undo"  -> POST /api/undo   archives the last batch
+  "move ..." -> POST /api/move  moves the best-matching open card
 ```
 
-With the review window off, `/api/process` extracts and creates in one call.
+## Quick start
 
----
-
-## Setup
-
-You need Node 18+, a free Gemini API key and a Trello account.
+Requires Node 18+, a Gemini API key and a Trello account.
 
 1. `npm install`
-2. `copy .env.example .env.local` (macOS/Linux: `cp .env.example .env.local`)
-3. Add a free Gemini API key (<https://aistudio.google.com/apikey>) as `GEMINI_API_KEY`. Use a key from a project that has free-tier access.
-4. Go to <https://trello.com/power-ups/admin>, create an app and copy its **API key** into `TRELLO_KEY`.
-5. Generate a token with read and write access (the **Token** link on the app's API key page) and copy it into `TRELLO_TOKEN`.
-6. Create a Trello board with lists **To Do**, **Doing** and **Done**.
-7. Put the board id in `TRELLO_BOARD_ID` (the short id from the board URL works too).
-8. `npm run dev` and open <http://localhost:3000>.
-
-For a demo, `npm run build && npm start` avoids the slow first compile of dev mode.
-
-### Environment variables
+2. Copy `.env.example` to `.env.local` and fill in the values below.
+3. `npm run dev`, then open <http://localhost:3000>.
 
 | Variable | Purpose |
 | --- | --- |
-| `GEMINI_API_KEY` | Model access for extraction |
-| `GEMINI_MODEL` | Optional, defaults to `gemini-3.1-flash-lite` (fast; larger models can be slow on the free tier) |
-| `TRELLO_KEY`, `TRELLO_TOKEN` | Trello REST credentials |
-| `TRELLO_BOARD_ID` | The board cards are written to |
-| `APP_PASSCODE` | Optional. When set, the whole app is behind a passcode (use this in production) |
+| `GEMINI_API_KEY` | Model access ([get a key](https://aistudio.google.com/apikey)) |
+| `GEMINI_MODEL` | Optional. Defaults to `gemini-3.1-flash-lite` |
+| `TRELLO_KEY`, `TRELLO_TOKEN` | Trello REST credentials ([Power-Up admin](https://trello.com/power-ups/admin)) |
+| `TRELLO_BOARD_ID` | The board cards are written to. It needs lists named To Do, Doing and Done |
+| `APP_PASSCODE` | Optional. Puts the whole app behind a passcode; use it in production |
 | `NEXT_PUBLIC_TRELLO_BOARD_ID` | Optional. Enables the Trello links in the header |
 
-`.env.local` is git-ignored. Trello tokens can be set to expire; regenerate yours if calls start returning 401.
-
----
+`.env.local` is git-ignored. For a deployment, set the same variables in your host (for example Vercel).
 
 ## Pages and API
 
-| Route | What it does |
+| Route | Purpose |
 | --- | --- |
-| `/` | Dictate, review, create, undo |
+| `/` | Dictate, review, create, undo and move |
 | `/board` | Live Trello board view |
-| `POST /api/process` | `{ transcript, today, preview? }`. With `preview: true` returns `{ summary, decisions, tasks }` and writes nothing; otherwise extracts and creates, returning `{ summary, decisions, cards }` |
-| `POST /api/create` | `{ tasks }` creates reviewed tasks, returns `{ cards }` (each card has `id`, `url`, `assigned`, or `duplicate` / `error`) |
-| `POST /api/move` | `{ query, list }` moves the best-matching open card to `todo` / `doing` / `done` |
-| `POST /api/login` | `{ passcode }` sets the auth cookie (only when `APP_PASSCODE` is set) |
-| `POST /api/undo` | `{ ids }` archives cards, returns `{ archived }` |
-| `GET /api/board` | The board's lists and open cards, with priority parsed from labels |
-
-Quick check from a terminal:
-
-```
-curl -X POST http://localhost:3000/api/process \
-  -H "Content-Type: application/json" \
-  -d '{"transcript":"Sara needs to send the pricing deck by Friday, urgent.","today":"2026-10-30","preview":true}'
-```
-
----
+| `POST /api/process` | `{ transcript, today, preview? }` extracts tasks; with `preview: true` it writes nothing |
+| `POST /api/create` | `{ tasks }` creates reviewed tasks and returns the cards |
+| `POST /api/move` | `{ query, list }` moves the best-matching open card |
+| `POST /api/undo` | `{ ids }` archives cards |
+| `POST /api/login` | `{ passcode }` signs in when `APP_PASSCODE` is set |
+| `GET /api/board` | The board's lists and open cards |
 
 ## Project structure
 
 ```
 src/
   app/
-    page.tsx              dictation UI, review window, undo
-    board/page.tsx        live board view
-    layout.tsx            fonts, backdrop
-    globals.css           backdrop, panel, type scale, animations
-    api/process|create|undo|board/route.ts
-  components/
-    Shell.tsx             shared frame: nav, hairline grid, clock, footer
-    TaskCard.tsx          ticket card, editable review card, summary block
-    Decor.tsx             glass word, draggable stickers
-  lib/
-    llm.ts                Gemini call, prompt, JSON parsing and retry
-    tasks.ts              task sanitising, undo-command detection
-    trello.ts             lists, members, labels, create, archive, duplicates, board read
-    types.ts              shared types
+    page.tsx                 dictation UI, review window, voice commands
+    board/page.tsx           live board view
+    login/page.tsx           passcode sign-in
+    api/{process,create,move,undo,login,board}/route.ts
+  components/                Shell, TaskCard, Decor
+  lib/                       llm.ts, trello.ts, tasks.ts, types.ts
+  middleware.ts              optional passcode gate
+assets/                      logo, wordmark and banner
+media/                       launch video and poster
 ```
 
----
+## Limitations
 
-## Demo script
-
-1. **Hook (10 s):** "After every meeting, someone has to turn the chaos into tasks. I never touch the keyboard. Watch."
-2. Show the empty app next to the Trello board (and `/board` in a second tab).
-3. Click the field once, then hold the Wispr Flow key and dictate naturally, including filler words and a self-correction ("um, actually make that Thursday").
-4. Pause. The glass word changes, the review cards appear with the countdown, then the cards are created.
-5. Open one card to show owner, due date, label and list on Trello. Show it appear on `/board`.
-6. **Bonus:** say "undo" and watch the batch disappear.
-7. **Close:** "Voice in, real work out, zero typing."
-
-Sample transcript:
-
-> Okay so after the meeting, Sara needs to send the revised pricing deck to the client by Friday, it's pretty urgent. I need to book the venue for the offsite before end of next week. Also Ahmed should look into why the checkout page is slow, no rush, maybe sometime in the next two weeks. And somebody needs to email legal about the contract.
-
-Backup plan: keep a screen recording of a successful run and the sample transcript in a text file.
-
-Before presenting: do one warm-up run (the free Gemini tier can vary from about 2 s to over 20 s), and click the field first so Wispr Flow types into it.
-
----
-
-## Known limits
-
-- Not deployed; it runs locally. A public deployment needs an access guard, because anyone could otherwise write cards to your board.
 - Owners are only assigned when they are members of the board; other names stay in the card description.
-- The duplicate guard compares titles with a similarity threshold, so a heavily reworded duplicate can slip through.
-- The `/board` page polls every 10 s rather than using Trello webhooks.
-- No automated tests beyond manual smoke testing.
-- Tested with simulated typing, not yet with real Wispr Flow dictation on every browser.
-
----
-
-## Ideas to add product value
-
-Ordered by value for effort. "S" is under an hour, "M" is a few hours, "L" is a day or more.
-
-### Quick wins (S)
-
-| Idea | Why it adds value |
-| --- | --- |
-| **Keyboard shortcuts** (Enter create now, Esc cancel review, U undo) | Power users and demos move faster |
-| **Move cards by voice** ("move the pricing deck to Done") | Turns capture into full board control; reuses the existing list routing |
-| **Teammate aliases** (map "Sara" or a nickname to a member) | Fixes assignment when names do not match exactly or Wispr mishears |
-| **Default owner and due date** setting | Fewer unassigned or undated cards |
-| **Dictation history** (last 10 in local storage, click to reuse) | Recover or repeat a dictation |
-| **Copy summary as Markdown** | Paste meeting notes straight into Slack or email |
-| **Toast and sound** on creation | Clear feedback when you are not looking at the screen |
-| **Fix emoji on old cards** (script that moves emoji to labels) | One consistent board |
-
-### Medium (M)
-
-| Idea | Why it adds value |
-| --- | --- |
-| **Checklists from sub-steps** ("first draft it, then send it") | Better fidelity than splitting into separate cards |
-| **Voice questions** ("what is due this week?", "what is Sara working on?") | Moves toward a true agent, not only capture |
-| **Low-confidence highlighting** in the review window | Shows which fields the model was unsure about |
-| **Board switcher / multiple projects** ("put this on the marketing board") | Real teams use several boards |
-| **Trello webhooks** instead of polling on `/board` | Instant, cheaper live updates |
-| **Notion, Linear, Jira, Asana adapters** behind one provider interface | Not tied to Trello; wider audience |
-| **Post the summary** to Slack or email after each dictation | Closes the loop for the whole team |
-| **Access guard and rate limit** (shared passcode) then deploy to Vercel | Judges and users can try it; protects your board |
-| **Tests** for date resolution, undo detection and duplicate matching | Confidence when you change the prompt or models |
-| **Dark theme** and a reduced-motion mode | Accessibility and personal preference |
-
-### Larger bets (L)
-
-| Idea | Why it adds value |
-| --- | --- |
-| **Calendar sync** (due dates and meetings to Google or Outlook) | Tasks land where people already look |
-| **Recurring tasks** ("every Monday") | Common real-world need |
-| **Meeting recording import** (transcribe, then run the same pipeline) | Capture without dictating |
-| **Team workspace** with accounts, history and an audit log | Moves from demo to product |
-| **Weekly digest** (what was created, done, overdue) | Shows ongoing value, not just capture |
-| **Mobile app or PWA** with push-to-talk | Dictate on the way out of a meeting |
-| **Multi-language dictation** | Wispr Flow supports many languages; the prompt can follow |
-
-### Suggested order if time is short
-
-1. Keyboard shortcuts and teammate aliases (small, helps every demo).
-2. Move cards by voice (best "wow" per hour).
-3. Access guard, then deploy so judges can try it.
-4. Voice questions, as the step from capture to an agent.
-
----
+- The duplicate guard compares titles by similarity, so a heavily reworded duplicate can slip through.
+- `/board` polls every 10 seconds rather than using Trello webhooks.
+- Model latency varies on the Gemini free tier.
 
 ## Brand
 
-**Name:** VoiceBoard (one word, capital V and B). Written `VOICEBOARD` only in the extended-width wordmark.
-**Tagline:** Talk. Cards appear.
-**One-liner:** Dictate a messy meeting. Get real Trello cards.
-**Domain label:** `voiceboard.app` (used as a UI label; the live demo is at the Vercel URL above).
-
-### Logo
+**VoiceBoard**: one word, capital V and B. Tagline: *Talk. Cards appear.*
 
 | Asset | Use |
 | --- | --- |
-| [`assets/logo.png`](assets/logo.png) | Wordmark with the mark, transparent background, for light backgrounds |
-| [`assets/logo-mark.svg`](assets/logo-mark.svg) | The mark alone (also the app favicon at `src/app/icon.svg`) |
-| [`assets/banner.png`](assets/banner.png) | 1280x640 social preview / hero banner |
+| [`assets/logo.png`](assets/logo.png) | Mark and wordmark for light backgrounds |
+| [`assets/logo-dark.png`](assets/logo-dark.png) | Mark and wordmark for dark backgrounds |
+| [`assets/logo-mark.svg`](assets/logo-mark.svg) | The mark alone (also the app favicon) |
+| [`assets/banner.png`](assets/banner.png) | 1280x640 social preview |
 
-The mark is a rounded square with a blue-to-violet-to-pink gradient. Four white sound-wave bars (the voice) lead into a white ticket card with a coloured title line and a pink dot (the Trello card). It reads as "speech becomes a card".
+The mark is a gradient squircle holding a white card with three voice bars: speech becoming a card. Keep clear space of at least half the mark's height, use it at 24 px or larger, and do not stretch, recolour or add effects.
 
-**Clear space:** keep at least half the mark's height free on all sides. **Minimum size:** 24 px for the mark, 120 px wide for the wordmark. Do not stretch, recolour, outline or add effects to the mark, and do not place the dark wordmark on dark backgrounds.
-
-### Colour
-
-| Role | Hex |
+| Colour | Hex |
 | --- | --- |
-| Ink (text, wordmark) | `#07162b` |
-| Blue (mark start, links) | `#4d8dff` |
-| Violet (mark middle) | `#8a5cff` |
-| Pink (mark end, accents) | `#ff4fa0` |
-| Panel | `#bddcf5` |
-| Priority P1 / P2 / P3 | `#ff3b30` / `#ffb020` / `#22c55e` |
+| Ink | `#0B1220` |
+| Sky | `#6FAAFF` |
+| Indigo | `#5B64FF` |
+| Violet | `#7B4DFF` |
+| Rose | `#FF6FA8` |
 
-### Typography
+Typography: Archivo (wordmark in SemiBold, interface in Regular and Black Extended), JetBrains Mono for labels and the dictation field. Tone: short, plain and specific; lead with what the product does, not how it is built.
 
-| Style | Font | Used for |
-| --- | --- | --- |
-| Display | Archivo Black, extended width (125), uppercase | Headlines and the wordmark |
-| Title and body | Archivo | Card titles and paragraphs |
-| Label and input | JetBrains Mono, uppercase labels | Navigation, metadata, status, the dictation field |
-| Accent | Pacifico, with the glass lighting effect | The single state word ("speak", "go on", "sorting") |
+---
 
-### Voice
-
-Short, plain and specific. Lead with what the product does ("Talk. Cards appear."), never with how it is built. No filler such as "streamline your workflow". Be honest about limits.
+Built for the Wispr Flow hackathon.
