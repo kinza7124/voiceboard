@@ -133,25 +133,36 @@ media/                       launch video and poster
 
 **VoiceBoard**: one word, capital V and B. Tagline: *Talk. Cards appear.*
 
+### The mark
+
+A speech bubble holds three columns of small cards. The bubble is the **voice**; the columns are the **board**. The columns rise and fall in height, so the same shape also reads as a sound wave. One simple symbol, two ideas, no extra detail.
+
+The wordmark mirrors it: **Voice** in a light weight, **Board** in bold.
+
 | Asset | Use |
 | --- | --- |
 | [`assets/logo.png`](assets/logo.png) | Mark and wordmark for light backgrounds |
 | [`assets/logo-dark.png`](assets/logo-dark.png) | Mark and wordmark for dark backgrounds |
-| [`assets/logo-mark.svg`](assets/logo-mark.svg) | The mark alone (also the app favicon) |
+| [`assets/logo-mark.svg`](assets/logo-mark.svg) | The bubble mark alone, for headers and avatars |
+| [`assets/icon.svg`](assets/icon.svg) | App icon: white bubble on an indigo squircle (also the favicon) |
 | [`assets/banner.png`](assets/banner.png) | 1280x640 social preview |
 
-The mark is a gradient squircle holding a white card with three voice bars: speech becoming a card. Keep clear space of at least half the mark's height, use it at 24 px or larger, and do not stretch, recolour or add effects.
+**Usage.** Keep clear space of at least half the bubble's height. Use the mark at 16 px or larger and the full logo at 120 px wide or larger. Do not stretch, rotate, recolour, outline or add shadows. Use `logo-dark.png` on dark backgrounds, never the dark wordmark.
 
-| Colour | Hex |
-| --- | --- |
-| Ink | `#0B1220` |
-| Sky | `#6FAAFF` |
-| Indigo | `#5B64FF` |
-| Violet | `#7B4DFF` |
-| Rose | `#FF6FA8` |
+### Colour
 
-Typography: Archivo (wordmark in SemiBold, interface in Regular and Black Extended), JetBrains Mono for labels and the dictation field. Tone: short, plain and specific; lead with what the product does, not how it is built.
+| Colour | Hex | Use |
+| --- | --- | --- |
+| Ink | `#0B1220` | Wordmark and text |
+| Sky | `#6FAAFF` | Gradient start |
+| Indigo | `#6A4DFF` | Gradient end, accents |
+| Mist | `#F0F3FB` | Light backgrounds |
 
+The mark is a single diagonal gradient from Sky to Indigo with white cards.
+
+### Typography
+
+Archivo for the wordmark (Light 380 and ExtraBold 800, tight tracking) and the interface; JetBrains Mono for labels and the dictation field. Tone: short, plain and specific. Lead with what the product does, not how it is built.
 ---
 
 Built for the Wispr Flow hackathon.

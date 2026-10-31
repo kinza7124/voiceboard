@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="VoiceBoard app icon">
+  <defs>
+    <linearGradient id="bg" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0" stop-color="#6FAAFF"/>
+      <stop offset="1" stop-color="#6A4DFF"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="58" fill="url(#bg)"/>
+  <!-- white speech bubble, centred -->
+  <g transform="translate(128 128) scale(0.78) translate(-128 -128)">
+    <path d="M82 38H174A52 52 0 0 1 226 90V138A52 52 0 0 1 174 190H128L84 226Q76 232 76 222L80 190A52 52 0 0 1 30 138V90A52 52 0 0 1 82 38Z"
+          fill="#fff" stroke="#fff" stroke-width="8" stroke-linejoin="round"/>
+    <g fill="#5B5BF5">
+      <rect x="72" y="88" width="30" height="22" rx="7"/>
+    <rect x="72" y="118" width="30" height="22" rx="7"/>
+    <rect x="113" y="73" width="30" height="22" rx="7"/>
+    <rect x="113" y="103" width="30" height="22" rx="7"/>
+    <rect x="113" y="133" width="30" height="22" rx="7"/>
+    <rect x="154" y="88" width="30" height="22" rx="7"/>
+    <rect x="154" y="118" width="30" height="22" rx="7"/>
+    </g>
+  </g>
+</svg>
