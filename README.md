@@ -4,6 +4,8 @@
 
 Built for the Wispr Flow hackathon. Wispr Flow is the only input method: it types into the focused field, and VoiceBoard takes it from there.
 
+**Launch video:** [`media/brag.mp4`](media/brag.mp4) (25 s, with a [poster frame](media/brag.jpg)). The dictation in the video is an animated depiction, not a recording.
+
 ---
 
 ## Table of contents

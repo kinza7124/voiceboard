@@ -20,6 +20,9 @@ npm-debug.log*
 # typescript
 *.tsbuildinfo
 
+# launch video build output (frames, audio, renders)
+brag-output/
+
 # reference material
 image.png
 VoiceBoard Requirements Doc*
