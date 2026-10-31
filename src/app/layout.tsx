@@ -7,8 +7,10 @@ const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono", displ
 const script = Pacifico({ weight: "400", subsets: ["latin"], variable: "--font-script", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "VoiceBoard",
-  description: "Talk. Cards appear.",
+  title: { default: "VoiceBoard: Talk. Cards appear.", template: "%s | VoiceBoard" },
+  description:
+    "Dictate a messy meeting brain-dump with Wispr Flow and VoiceBoard files real Trello cards with owners, due dates, priorities and lists.",
+  applicationName: "VoiceBoard",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

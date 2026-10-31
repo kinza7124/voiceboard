@@ -1,3 +1,22 @@
+<p align="center">
+  <img src="assets/logo.png" alt="VoiceBoard" width="560">
+</p>
+
+<h3 align="center">Talk. Cards appear.</h3>
+
+<p align="center">
+  Voice-first task capture: dictate a messy meeting, get real Trello cards.<br>
+  <a href="https://voiceboard-three.vercel.app">Live demo</a> ·
+  <a href="media/brag.mp4">Launch video</a> ·
+  <a href="#brand">Brand</a>
+</p>
+
+<p align="center">
+  <img src="assets/banner.png" alt="VoiceBoard: Talk. Cards appear." width="720">
+</p>
+
+---
+
 # VoiceBoard
 
 **Talk. Cards appear.** Dictate a messy meeting brain-dump with [Wispr Flow](https://wisprflow.ai) and VoiceBoard turns it into real, structured Trello cards: title, owner, due date, priority, list and notes. No keyboard, no form.
@@ -18,6 +37,7 @@ Built for the Wispr Flow hackathon. Wispr Flow is the only input method: it type
 6. [Demo script](#demo-script)
 7. [Known limits](#known-limits)
 8. [Ideas to add product value](#ideas-to-add-product-value)
+9. [Brand](#brand)
 
 ---
 
@@ -243,3 +263,48 @@ Ordered by value for effort. "S" is under an hour, "M" is a few hours, "L" is a 
 2. Move cards by voice (best "wow" per hour).
 3. Access guard, then deploy so judges can try it.
 4. Voice questions, as the step from capture to an agent.
+
+---
+
+## Brand
+
+**Name:** VoiceBoard (one word, capital V and B). Written `VOICEBOARD` only in the extended-width wordmark.
+**Tagline:** Talk. Cards appear.
+**One-liner:** Dictate a messy meeting. Get real Trello cards.
+**Domain label:** `voiceboard.app` (used as a UI label; the live demo is at the Vercel URL above).
+
+### Logo
+
+| Asset | Use |
+| --- | --- |
+| [`assets/logo.png`](assets/logo.png) | Wordmark with the mark, transparent background, for light backgrounds |
+| [`assets/logo-mark.svg`](assets/logo-mark.svg) | The mark alone (also the app favicon at `src/app/icon.svg`) |
+| [`assets/banner.png`](assets/banner.png) | 1280x640 social preview / hero banner |
+
+The mark is a rounded square with a blue-to-violet-to-pink gradient. Four white sound-wave bars (the voice) lead into a white ticket card with a coloured title line and a pink dot (the Trello card). It reads as "speech becomes a card".
+
+**Clear space:** keep at least half the mark's height free on all sides. **Minimum size:** 24 px for the mark, 120 px wide for the wordmark. Do not stretch, recolour, outline or add effects to the mark, and do not place the dark wordmark on dark backgrounds.
+
+### Colour
+
+| Role | Hex |
+| --- | --- |
+| Ink (text, wordmark) | `#07162b` |
+| Blue (mark start, links) | `#4d8dff` |
+| Violet (mark middle) | `#8a5cff` |
+| Pink (mark end, accents) | `#ff4fa0` |
+| Panel | `#bddcf5` |
+| Priority P1 / P2 / P3 | `#ff3b30` / `#ffb020` / `#22c55e` |
+
+### Typography
+
+| Style | Font | Used for |
+| --- | --- | --- |
+| Display | Archivo Black, extended width (125), uppercase | Headlines and the wordmark |
+| Title and body | Archivo | Card titles and paragraphs |
+| Label and input | JetBrains Mono, uppercase labels | Navigation, metadata, status, the dictation field |
+| Accent | Pacifico, with the glass lighting effect | The single state word ("speak", "go on", "sorting") |
+
+### Voice
+
+Short, plain and specific. Lead with what the product does ("Talk. Cards appear."), never with how it is built. No filler such as "streamline your workflow". Be honest about limits.
